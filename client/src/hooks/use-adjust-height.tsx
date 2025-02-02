@@ -12,9 +12,17 @@ export const useAdjustHeight = () => {
         }
     };
 
+    const resetHeight = () => {
+        const textarea = textareaRef.current;
+        if (textarea) {
+            textarea.style.height = 'auto';
+        }
+    }
+
     return {
         textareaRef,
-        adjustHeight
+        adjustHeight,
+        resetHeight
     }
 
 }
