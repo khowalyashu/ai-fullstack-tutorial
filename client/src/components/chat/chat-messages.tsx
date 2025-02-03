@@ -3,6 +3,9 @@ import { Avatar, AvatarFallback } from "../ui/avatar"
 import { Button } from "../ui/button"
 import { useState } from "react"
 import { Message } from "@/App"
+import ChatProgressSteps from "./chat-progress-steps"
+import { AnimatePresence } from "motion/react"
+import { motion } from "motion/react"
 
 interface ShowEdit {
     id: number,
@@ -11,15 +14,15 @@ interface ShowEdit {
 
 interface ChatMessagesProps {
     messages: Message[]
+    isStreaming: boolean
 }
 
-function ChatMessages({ messages }: ChatMessagesProps) {
+function ChatMessages({ messages, isStreaming }: ChatMessagesProps) {
     const [showEdit, setShowEdit] = useState<ShowEdit | null>(null)
 
     const toggleShowEdit = (id: number, value: boolean) => {
         setShowEdit({ id, show: value })
     }
-
 
     return (
         <div className="pt-12 mx-auto max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-3xl mb-4">
@@ -46,7 +49,7 @@ function ChatMessages({ messages }: ChatMessagesProps) {
                                     <SparklesIcon className="h-5 w-5" />
                                 </AvatarFallback>
                             </Avatar>
-                            <div className="w-full flex-col gap-4">
+                            <div className="w-full flex flex-col gap-4">
                                 <div className="flex items-center justify-between">
                                     <h4 className="font-medium">Results</h4>
                                     <Button variant={"ghost"}>
@@ -54,9 +57,16 @@ function ChatMessages({ messages }: ChatMessagesProps) {
                                         <p>Show Steps</p>
                                     </Button>
                                 </div>
-                                <div className="pt-4">
-                                    <p>{message.text}</p>
-                                </div>
+                                <AnimatePresence>
+                                    {isStreaming && message.text == "" ? <ChatProgressSteps key={"progress-steps"} /> :
+                                        <motion.div 
+                                        initial={false} 
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{delay: 0.5}}
+                                        >
+                                            <p>{message.text}</p>
+                                        </motion.div>}
+                                </AnimatePresence>
                             </div>
                         </div>}
                     </div>

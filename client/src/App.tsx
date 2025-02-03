@@ -11,7 +11,11 @@ export interface Message {
 }
 
 function App() {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>([
+    { id: 1, text: "What is React?", sender: "user" },
+    { id: 2, text: "Hello! How can I help you today?", sender: "assistant" },
+
+  ]);
   const { messagesEndRef, scrollToBottom } = useScrollBottom()
   const [isStreaming, setIsStreaming] = useState(false)
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -30,6 +34,7 @@ function App() {
 
     // Stream each character
     try {
+      await new Promise(resolve => setTimeout(resolve, 6000));
       for (let i = 0; i < response.length; i++) {
         // Check if streaming has been aborted
         if (signal.aborted) {
@@ -92,14 +97,19 @@ function App() {
   return (
     <div className="flex flex-col h-screen">
       <div className="flex-1 overflow-y-auto">
-        {messages.length > 0 ? <ChatMessages messages={messages} /> :
+        {messages.length > 0 ? <ChatMessages
+          messages={messages}
+          isStreaming={isStreaming} /> :
           <ChatPrompts />
         }
         <div ref={messagesEndRef} />
       </div>
       <div className="w-full mx-auto max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-3xl mb-4">
         <div className="flex flex-col items-center gap-2">
-          <ChatInput handleSubmit={handleSubmit} isStreaming={isStreaming} handleStopGeneration={handleStopGeneration} />
+          <ChatInput
+            handleSubmit={handleSubmit}
+            isStreaming={isStreaming}
+            handleStopGeneration={handleStopGeneration} />
           <p className="text-muted-foreground text-xs">AI can make mistakes. Check important info.</p>
         </div>
       </div>
