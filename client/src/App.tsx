@@ -3,6 +3,10 @@ import ChatInput from "./components/chat/chat-input"
 import ChatMessages from "./components/chat/chat-messages"
 import ChatPrompts from "./components/chat/chat-prompts"
 import { useScrollBottom } from "./hooks/use-scroll-bottom";
+import { SidebarInset, SidebarProvider, SidebarTrigger } from "./components/ui/sidebar";
+import { AppSidebar } from "./components/sidebar/app-sidebar";
+import { Button } from "./components/ui/button";
+import { Star } from "lucide-react";
 
 export interface Message {
   id: number,
@@ -12,8 +16,8 @@ export interface Message {
 
 function App() {
   const [messages, setMessages] = useState<Message[]>([
-    { id: 1, text: "What is React?", sender: "user" },
-    { id: 2, text: "Hello! How can I help you today?", sender: "assistant" },
+    // { id: 1, text: "What is React?", sender: "user" },
+    // { id: 2, text: "Hello! How can I help you today?", sender: "assistant" },
 
   ]);
   const { messagesEndRef, scrollToBottom } = useScrollBottom()
@@ -95,7 +99,28 @@ function App() {
   }, [messages]);
 
   return (
-    <div className="flex flex-col h-screen">
+    <SidebarProvider>
+    <AppSidebar />
+    <SidebarInset>
+      <header className="flex h-14 shrink-0 items-center gap-2 sticky">
+        <div className="flex items-center gap-2 px-3">
+          <SidebarTrigger />
+        </div>
+        <div>
+          <p>Personality AI</p>
+        </div>
+        <div className="ml-auto px-3">
+        <div className="flex items-center gap-2 text-sm">
+            <div className="hidden font-medium text-muted-foreground md:inline-block">
+                Edit Oct 08
+            </div>
+            <Button variant="ghost" size="icon" className="h-7 w-7">
+                <Star />
+            </Button>
+        </div>
+        </div>
+      </header>
+      <div className="flex flex-col h-[calc(100vh-3.5rem)]">
       <div className="flex-1 overflow-y-auto">
         {messages.length > 0 ? <ChatMessages
           messages={messages}
@@ -113,8 +138,13 @@ function App() {
           <p className="text-muted-foreground text-xs">AI can make mistakes. Check important info.</p>
         </div>
       </div>
-    </div>
+    </div> 
+    </SidebarInset>
+  </SidebarProvider>
   )
 }
 
 export default App
+
+
+{/* */}
