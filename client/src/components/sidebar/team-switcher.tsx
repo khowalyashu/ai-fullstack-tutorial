@@ -15,7 +15,7 @@ export function TeamSwitcher({
         plan: string
     }[]
 }) {
-    const activeTeam = teams.find((team) => team.name === "Acme Inc")
+    const activeTeam = teams.find((team) => team.name === "Deakin AI Tutor")
 
     return (
         <SidebarMenu>

@@ -3,11 +3,11 @@ import { Button } from "../ui/button"
 
 function ChatPrompts() {
     const prompts: string[] = [
-        "Clean Accounts Field",
-        "Mutual Funds Advisor",
-        "Story Teller",
-        "LinkedIn Post Creator",
-        "Financial Advisor"
+        "Important Questions",
+        "Doubts Related to last week Lecture",
+        "Assignments Hints",
+        "Workshop Doubt",
+        "Brain Storming"
     ]
 
     return (
@@ -16,8 +16,8 @@ function ChatPrompts() {
                 <SparklesIcon className="h-8 w-8 " />
             </div>
             <div className="max-w-xs text-center">
-                <h1 className="font-semibold text-3xl">Talk Data to Me</h1>
-                <p className="text-muted-foreground text-sm">Choose a prompt below or write your own to start chatting with AI</p>
+                <h1 className="font-semibold text-3xl">Talk To Me</h1>
+                <p className="text-muted-foreground text-sm">Choose a prompt below or write your own to start chatting with Deakin AI Tutor</p>
             </div>
             <div className="flex flex-col gap-4 text-center">
                 <p className="text-muted-foreground text-sm font-normal">Ask about:</p>

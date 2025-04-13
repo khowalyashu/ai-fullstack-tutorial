@@ -23,7 +23,7 @@ import {
 const data = {
   teams: [
     {
-      name: "Acme Inc",
+      name: "Deakin AI Tutor",
       logo: Command,
       plan: "Enterprise",
     },
@@ -43,7 +43,7 @@ const data = {
       title: "Start a new chat",
       url: "#",
       icon: Sparkles,
-    }
+    },
   ],
   navSecondary: [
     {
@@ -64,40 +64,26 @@ const data = {
   ],
   favorites: [
     {
-      name: "Project Management & Task Tracking",
+      name: "RL Tutor",
       url: "#",
       emoji: "📊",
     },
     {
-      name: "Family Recipe Collection & Meal Planning",
+      name: "NLP Tutor",
       url: "#",
       emoji: "🍳",
-    }
-  ],
-  workspaces: [
-    {
-      name: "Personal Life Management",
-      emoji: "🏠",
-      url: "#",
     },
     {
-      name: "Professional Development",
+      name: "DL Tutor",
       emoji: "💼",
       url: "#",
     },
+    
+  ],
+  workspaces: [
     {
-      name: "Creative Projects",
+      name: "Help Desk",
       emoji: "🎨",
-      url: "#",
-    },
-    {
-      name: "Home Management",
-      emoji: "🏡",
-      url: "#",
-    },
-    {
-      name: "Travel & Adventure",
-      emoji: "🧳",
       url: "#",
     },
   ],
