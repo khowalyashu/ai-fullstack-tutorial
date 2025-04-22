@@ -1,20 +1,20 @@
 import { useState } from "react"
 import { SendIcon, StopCircleIcon, WandSparklesIcon } from "lucide-react"
-import { motion } from 'motion/react'
-
+import { motion } from 'framer-motion'
 import { Textarea } from "../ui/textarea"
 import { Button } from "../ui/button"
 import { useAdjustHeight } from "@/hooks/use-adjust-height"
 
-
 interface ChatInputProps {
     handleSubmit: (message: string, setMessage: React.Dispatch<React.SetStateAction<string>>, resetHeight: () => void) => Promise<void>
     isStreaming: boolean
-    handleStopGeneration:() => void
+    handleStopGeneration: () => void
+    inputText: string
+    setInputText: React.Dispatch<React.SetStateAction<string>>
 }
 
-function ChatInput({ handleSubmit, isStreaming, handleStopGeneration }: ChatInputProps) {
-    const [message, setMessage] = useState("")
+function ChatInput({ handleSubmit, isStreaming, handleStopGeneration, inputText, setInputText }: ChatInputProps) {
+    const [message, setMessage] = useState(inputText)
     const { textareaRef, adjustHeight, resetHeight } = useAdjustHeight()
 
     const handleMessageOnChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -22,20 +22,17 @@ function ChatInput({ handleSubmit, isStreaming, handleStopGeneration }: ChatInpu
         setMessage(e.target.value)
     }
 
-
     const handleMessageSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent> | React.KeyboardEvent<HTMLTextAreaElement>) => {
         e.preventDefault()
         handleSubmit(message, setMessage, resetHeight)
     }
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-        if (e.key === 'Enter') {
-            if (!e.shiftKey) {
-                e.preventDefault();
-                handleMessageSubmit(e);
-            }
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault()
+            handleMessageSubmit(e)
         }
-    };
+    }
 
     return (
         <div className="border sm:rounded-md bg-gray-100 p-2 w-full">
@@ -53,28 +50,35 @@ function ChatInput({ handleSubmit, isStreaming, handleStopGeneration }: ChatInpu
                         disabled={isStreaming}
                         className="pl-8 resize-none border-none bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 overflow-y-auto"
                         placeholder="Ask AI a question or make request"
-                        id="message-2" />
+                    />
                 </motion.div>
                 <WandSparklesIcon className="absolute top-3 left-2 text-muted-foreground h-4 w-4" />
             </div>
+
             <div className="flex items-end justify-between">
                 <div className="text-xs text-gray-400 ml-2 flex flex-row gap-4 justify-between w-full">
-                    <p >{message.length}/2000</p>
-                    {message.length > 0 && <p className="mr-4">Use <code className="bg-muted">shift + enter</code> for new line</p>}
+                    <p>{message.length}/2000</p>
+                    {message.length > 0 && (
+                        <p className="mr-4">Use <code className="bg-muted">shift + enter</code> for new line</p>
+                    )}
                 </div>
-                {
-                    isStreaming ?
-                        <Button onClick={handleStopGeneration} variant={"default"} size="icon">
-                            <StopCircleIcon className="animate-spin" />
-                        </Button>
-                        :
-                        <Button onClick={handleMessageSubmit} variant={message.length > 0 ? "default" : "ghost"} size="icon" disabled={message.length > 0 ? false : true}>
-                            <SendIcon />
-                        </Button>
-                }
+
+                {isStreaming ? (
+                    <Button onClick={handleStopGeneration} variant={"default"} size="icon">
+                        <StopCircleIcon className="animate-spin" />
+                    </Button>
+                ) : (
+                    <Button
+                        onClick={handleMessageSubmit}
+                        variant={message.length > 0 ? "default" : "ghost"}
+                        size="icon"
+                        disabled={message.length === 0}
+                    >
+                        <SendIcon />
+                    </Button>
+                )}
             </div>
         </div>
-
     )
 }
 

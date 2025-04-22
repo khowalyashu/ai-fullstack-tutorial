@@ -5,8 +5,8 @@ import ChatPrompts from "./components/chat/chat-prompts";
 import { useScrollBottom } from "./hooks/use-scroll-bottom";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "./components/ui/sidebar";
 import { AppSidebar } from "./components/sidebar/app-sidebar";
-import { Button } from "./components/ui/button";
-import { Star } from "lucide-react";
+// import { Button } from "./components/ui/button";
+// import { Star } from "lucide-react";
 import axios from "axios";
 
 export interface Message {
@@ -26,11 +26,17 @@ function App() {
   const { messagesEndRef, scrollToBottom } = useScrollBottom();
   const [isStreaming, setIsStreaming] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const [inputText, setInputText] = useState<string>("");
 
   const handleStopGeneration = () => {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
+  };
+  const handlePromptSelect = (prompt: string) => {
+    // Mimic the message + reset behavior since there's no input field interaction
+    // handleSubmit(prompt, () => {}, () => {});
+    setInputText(prompt);
   };
 
   const handleSubmit = async (
@@ -55,31 +61,40 @@ function App() {
   
     try {
       setIsStreaming(true);
+      abortControllerRef.current = new AbortController();
+const signal = abortControllerRef.current.signal;
   
-      const res = await axios.post("http://127.0.0.1:5000/api/query", {
+      const res = await axios.post("http://10.72.191.93:8000/query", {
         query: message,
         collection_name: "chroma_db", // Make this dynamic if needed
       });
+      
   
       // Updated to handle response correctly
       const responseText = res.data?.response;
-  
       if (!responseText || typeof responseText !== "string") {
         throw new Error("Invalid response from server");
       }
   
       // Stream response character by character
-      for (let i = 0; i < responseText.length; i++) {
-        await new Promise((resolve) => setTimeout(resolve, 25));
-        setMessages((prev) =>
-          prev.map((msg) =>
-            msg.id === assistantMessageId
-              ? { ...msg, text: responseText.slice(0, i + 1) }
-              : msg
-          )
-        );
-      }
-    } catch (error) {
+      const CHUNK_SIZE = 10;
+const CHUNK_DELAY = 10; // ms
+
+for (let i = 0; i < responseText.length; i += CHUNK_SIZE) {
+  if (signal.aborted) {
+    break;
+  }
+  await new Promise((resolve) => setTimeout(resolve, CHUNK_DELAY));
+  setMessages((prev) =>
+    prev.map((msg) =>
+      msg.id === assistantMessageId
+        ? { ...msg, text: responseText.slice(0, i + CHUNK_SIZE) }
+        : msg
+    )
+  );
+}
+    } 
+    catch (error) {
       console.error("API error:", error);
       setMessages((prev) =>
         prev.map((msg) =>
@@ -88,8 +103,10 @@ function App() {
             : msg
         )
       );
-    } finally {
+    }
+     finally {
       setIsStreaming(false);
+      abortControllerRef.current = null;
     }
   };
 
@@ -111,11 +128,11 @@ function App() {
           <div className="ml-auto px-3">
             <div className="flex items-center gap-2 text-sm">
               <div className="hidden font-medium text-muted-foreground md:inline-block">
-                Edit Oct 08
+                Deakin University
               </div>
-              <Button variant="ghost" size="icon" className="h-7 w-7">
+              {/* <Button variant="ghost" size="icon" className="h-7 w-7">
                 <Star />
-              </Button>
+              </Button> */}
             </div>
           </div>
         </header>
@@ -124,7 +141,7 @@ function App() {
             {messages.length > 0 ? (
               <ChatMessages messages={messages} isStreaming={isStreaming} />
             ) : (
-              <ChatPrompts />
+              <ChatPrompts onPromptSelect={handlePromptSelect} />
             )}
             <div ref={messagesEndRef} />
           </div>
@@ -134,6 +151,8 @@ function App() {
                 handleSubmit={handleSubmit}
                 isStreaming={isStreaming}
                 handleStopGeneration={handleStopGeneration}
+                inputText={inputText}
+  setInputText={setInputText}
               />
               <p className="text-muted-foreground text-xs">
                 AI can make mistakes. Check important info.
