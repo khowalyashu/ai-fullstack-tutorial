@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { SendIcon, StopCircleIcon, WandSparklesIcon } from "lucide-react"
 import { motion } from 'framer-motion'
 import { Textarea } from "../ui/textarea"
@@ -16,10 +16,15 @@ interface ChatInputProps {
 function ChatInput({ handleSubmit, isStreaming, handleStopGeneration, inputText, setInputText }: ChatInputProps) {
     const [message, setMessage] = useState(inputText)
     const { textareaRef, adjustHeight, resetHeight } = useAdjustHeight()
+    useEffect(() => {
+        setMessage(inputText)
+        adjustHeight()
+      }, [inputText])
 
     const handleMessageOnChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         adjustHeight()
         setMessage(e.target.value)
+        setInputText(e.target.value)
     }
 
     const handleMessageSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent> | React.KeyboardEvent<HTMLTextAreaElement>) => {
